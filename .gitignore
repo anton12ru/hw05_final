@@ -145,8 +145,17 @@ dmypy.json
 
 .mypy_cache
 
-# папки со статикой и медиа
+# Папка со статическими файлами css
 static/
-yatube/posts/static/
-yatube/media/
 
+# папка для отправки тестового письма , для востановления пароля
+sent_emails/
+
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover 
+
+# Папка с изображением и прочими файлами
+media/
