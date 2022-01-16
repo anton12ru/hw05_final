@@ -7,7 +7,6 @@ from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 
 from ..models import Comment, Group, Post, User
-from ..forms import PostForm
 
 TEMP_MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
 
@@ -46,7 +45,6 @@ class PostFormTests(TestCase):
             text='text comment',
             post=cls.posts,
         )
-        cls.form = PostForm()
 
     @classmethod
     def tearDownClass(cls):
@@ -170,7 +168,8 @@ class PostFormTests(TestCase):
         url_next = '?next='
         self.assertRedirects(
             response,
-            reverse('users:login') + url_next +
-            reverse('posts:add_comment', kwargs={'post_id': self.group.id})
+            reverse('users:login') + url_next + reverse(
+                'posts:add_comment', kwargs={'post_id': self.group.id}
+            )
         )
         self.assertEqual(Comment.objects.count(), comment_count)

@@ -1,6 +1,4 @@
 from django.db import models
-from django.shortcuts import redirect
-from django.urls.base import reverse
 
 
 class Contact(models.Model):

@@ -1,6 +1,6 @@
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
-# from django.views.decorators.cache import cache_page
+from django.views.decorators.cache import cache_page
 from django.contrib.auth.decorators import login_required
 
 from .forms import CommentForm, PostForm
@@ -17,7 +17,7 @@ def paginator_func(request, posts):
 
 
 # Главная страница Yatube соц сети
-# @cache_page(60 * 15)
+@cache_page(20)
 def index(request):
     posts = Post.objects.all()
     context = {
@@ -43,9 +43,18 @@ def group_posts(request, slug):
 def profile(request, username):
     author = get_object_or_404(User, username=username)
     posts = author.posts.all()
-    following = author.following.all()
+    if request.user.is_authenticated:
+        following = Follow.objects.filter(
+            user=request.user,
+            author=author)
+        context = {
+            'following': following,
+            'page_obj': paginator_func(request, posts),
+            'posts': posts,
+            'author': author,
+        }
+        return render(request, 'posts/profile.html', context)
     context = {
-        'following': following,
         'page_obj': paginator_func(request, posts),
         'posts': posts,
         'author': author,
@@ -125,14 +134,13 @@ def follow_index(request):
 def profile_follow(request, username):
     author = get_object_or_404(User, username=username)
     if author != request.user:
-        Follow.objects.create(user=request.user, author=author)
+        Follow.objects.get_or_create(user=request.user, author=author)
     return redirect('posts:profile', username=username)
 
 
 @login_required
 def profile_unfollow(request, username):
     author = get_object_or_404(User, username=username)
-    follow = Follow.objects.filter(author=author, user=request.user)
-    if follow != request.user:
-        follow.delete()
+    if author != request.user:
+        Follow.objects.filter(user=request.user, author=author).delete()
     return redirect('posts:profile', username=username)
