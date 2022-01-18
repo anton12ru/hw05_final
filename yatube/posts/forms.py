@@ -13,11 +13,13 @@ class PostForm(forms.ModelForm):
         ]
         help_texts = {
             'text': ('Текст нового поста'),
-            'group': ('Группа, к которой будет относиться пост'),
+            'group': ('Группа, к которой будет относиться пост.'),
+            'image': ('Загрузите изображение'),
         }
         labels = {
             'text': 'Текст поста',
-            'group': 'Группы'
+            'group': 'Группы',
+            'image': 'Картинка'
         }
 
     def clean_text(self):
@@ -33,3 +35,6 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ['text']
+        help_texts = {
+            'text': ('Введите текст комментария')
+        }

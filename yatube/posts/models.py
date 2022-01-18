@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.db.models import Q, F, CheckConstraint, UniqueConstraint
 
 User = get_user_model()
 
@@ -54,7 +55,7 @@ class Comment(models.Model):
         Post,
         on_delete=models.CASCADE,
         related_name='comments',
-        verbose_name='Комментарий',
+        verbose_name='Пост',
         null=True,
     )
     author = models.ForeignKey(
@@ -70,6 +71,14 @@ class Comment(models.Model):
         auto_now_add=True,
     )
 
+    class Meta:
+        ordering = ('-created',)
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'
+
+    def __str__(self) -> str:
+        return self.text
+
 
 class Follow(models.Model):
     user = models.ForeignKey(
@@ -84,3 +93,18 @@ class Follow(models.Model):
         related_name='following',
         null=True,
     )
+
+    class Meta():
+        unique_together = (('user', 'author'),)
+        constraints = [
+            UniqueConstraint(
+                fields=['user', 'author'],
+                name='follow_unique'
+            ),
+            CheckConstraint(check=~Q(
+                user=F('author')),
+                name='users_cannot_rate_themselves'),
+        ]
+
+    def __str__(self) -> str:
+        return str(self.user)

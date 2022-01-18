@@ -115,6 +115,15 @@ class PostPagesTest(TestCase):
             self.posts, response.context.get('page_obj').object_list
         )
 
+    def test_group_page_show_corect_context(self):
+        response = self.authorized_client.get(
+            reverse('posts:group_list', args={self.group.slug})
+        )
+        post = response.context['group']
+        self.assertEqual(post.title, PostPagesTest.group.title)
+        self.assertEqual(post.slug, PostPagesTest.group.slug)
+        self.assertEqual(post.description, PostPagesTest.group.description)
+
 
 @override_settings(MEDIA_ROOT=TEMP_MEDIA_ROOT)
 class ImageTest(TestCase):

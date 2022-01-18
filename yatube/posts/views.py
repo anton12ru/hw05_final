@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 
 from .forms import CommentForm, PostForm
 
-from .models import Group, Post, User, Follow
+from .models import Group, Post, User, Follow, Comment
 
 from yatube.settings import post_count
 
@@ -65,11 +65,13 @@ def profile(request, username):
 def post_detail(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
     form = CommentForm()
+    created = Comment.__str__
     comments = post.comments.all()
     context = {
         'post': post,
         'form': form,
         'comments': comments,
+        'created': created,
     }
     return render(request, 'posts/post_detail.html', context)
 
