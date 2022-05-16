@@ -7,11 +7,11 @@ from .forms import CommentForm, PostForm
 
 from .models import Group, Post, User, Follow, Comment
 
-from yatube.settings import post_count
+from yatube.settings import POSTS_OF_PAGE
 
 
 def paginator_func(request, posts):
-    paginator = Paginator(posts, post_count)
+    paginator = Paginator(posts, POSTS_OF_PAGE)
     page_obj = paginator.get_page(request.GET.get('page'))
     return page_obj
 

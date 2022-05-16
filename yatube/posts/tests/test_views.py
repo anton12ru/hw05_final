@@ -12,6 +12,8 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 
 from posts.models import Post, Group, Follow
 
+from yatube.settings import POSTS_OF_PAGE
+
 User = get_user_model()
 
 TEMP_MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
@@ -79,18 +81,17 @@ class PostPagesTest(TestCase):
 
     def test_paginator_page_with_show_correct_context_posts(self):
         """Проверка Paginator и шаблоны сформирован с правильным контекстом."""
-        post_page_1 = 10
         post_page_2 = 4
         posts = [
             Post(
                 text=f'posts #{num}',
                 author=PostPagesTest.user,
                 group=PostPagesTest.group,
-            ) for num in range(1, (post_page_1 + post_page_2))
+            ) for num in range(1, (POSTS_OF_PAGE + post_page_2))
         ]
         Post.objects.bulk_create(posts)
         pages = [
-            (1, post_page_1),
+            (1, POSTS_OF_PAGE),
             (2, post_page_2),
         ]
         for name, _, args in PostPagesTest.paginator_url:
